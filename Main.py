@@ -1,3 +1,8 @@
 from Application import *
+import tensorflow as tf
 
-app = Application()
+
+
+
+app = Application(None)
+
