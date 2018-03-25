@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import certifi
 import urllib3
 import time
-from bintrees import FastAVLTree
 
 class Crawler:
 
@@ -49,25 +48,37 @@ class Crawler:
             time.sleep(1)
 
     def get_comments(self):
-        tree = FastAVLTree()
         if len(self.url_list) is None :
             return None
         url = self.url_list.pop(0)
         soup = self.get_soup(url)
         message_list = []
-        for txt in soup.find_all('p') :
-            str = txt.string
+        for txt in soup.find_all('p'):
+            try:
+                str = txt.string
+            except Exception as e:
+                continue
             if str != None and len(str) > 100:
                 message_list.append(str)
-        return message_list;
+        return message_list
 
 
 crawl = Crawler()
 crawl.add_url('https://www.reddit.com/r/The_Donald/')
 crawl.get_comment_list()
 crawl.print_url_list()
+f = open('lst2.txt','w')
 while crawl.get_url_list_size() > 0:
-    print(crawl.get_comments())
+    lst = crawl.get_comments()
+    for line in lst:
+        try:
+            print(line)
+            f.write(line)
+            f.flush()
+        except Exception as e:
+            continue
+
+
 
 
 
