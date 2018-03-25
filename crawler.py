@@ -44,7 +44,7 @@ class Crawler:
             return
         self.build_url_list()
         count = self.get_url_list_size()
-        for i in range(1):                      # DON'T FORGET TO CHANGE BACKT TO THE VARIABLE 'count'
+        for i in range(count):
             self.build_url_list()
             time.sleep(1)
 
@@ -57,15 +57,19 @@ class Crawler:
         message_list = []
         for txt in soup.find_all('p') :
             str = txt.string
-            if str != None :
+            if str != None and len(str) > 100:
                 message_list.append(str)
         return message_list;
 
+
 crawl = Crawler()
-crawl.add_url('https://www.reddit.com/r/Showerthoughts/')
+crawl.add_url('https://www.reddit.com/r/The_Donald/')
 crawl.get_comment_list()
-#crawl.print_url_list()
-print(crawl.get_comments())
+crawl.print_url_list()
+while crawl.get_url_list_size() > 0:
+    print(crawl.get_comments())
+
+
 
 
 
