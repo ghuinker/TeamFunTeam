@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 import certifi
 import urllib3
-import _thread
 import time
+from bintrees import FastAVLTree
 
 class Crawler:
 
@@ -12,6 +12,9 @@ class Crawler:
     
     def add_url(self, url):
         self.url_list.append(url)
+    
+    def get_url_list_size(self):
+        return len(self.url_list)
     
     def print_url_list(self):
         for txt in self.url_list:
@@ -23,12 +26,11 @@ class Crawler:
         return soup
 
     def build_url_list(self):
-        if len(self.url_list) is None:
+        if len(self.url_list) is None :
             return None
-        url = self.url_list.pop()
+        url = self.url_list.pop(0)
         soup = self.get_soup(url)
         url_len = len(url)
-        
         for link in soup.find_all('a'):
             str = link.get('href')
             try:
@@ -37,13 +39,34 @@ class Crawler:
             except:
                 continue
 
-        
+    def get_comment_list(self):
+        if len(self.url_list) is None:
+            return
+        self.build_url_list()
+        count = self.get_url_list_size()
+        for i in range(1):                      # DON'T FORGET TO CHANGE BACKT TO THE VARIABLE 'count'
+            self.build_url_list()
+            time.sleep(1)
+
+    def get_comments(self):
+        tree = FastAVLTree()
+        if len(self.url_list) is None :
+            return None
+        url = self.url_list.pop(0)
+        soup = self.get_soup(url)
+        message_list = []
+        for txt in soup.find_all('p') :
+            str = txt.string
+            if str != None :
+                message_list.append(str)
+        return message_list;
 
 crawl = Crawler()
-crawl.add_url('https://www.reddit.com/r/The_Donald/comments/5asj7o/announcement_you_know_we_are_winning_because_ctr/d9ixlqv/')
-crawl.build_url_list()
-crawl.print_url_list()
-#soup = crawl.get_soup(url_list)
+crawl.add_url('https://www.reddit.com/r/Showerthoughts/')
+crawl.get_comment_list()
+#crawl.print_url_list()
+print(crawl.get_comments())
+
 
 
 """
